@@ -1,8 +1,10 @@
 from fastapi import FastAPI, Form
 from datetime import datetime
+from typing import List
 
 from database import SessionLocal, engine, Base
 from models import Review
+from schemas import ReviewResponse
 
 app = FastAPI()
 
@@ -36,7 +38,7 @@ async def webhook(From: str = Form(...), Body: str = Form(...)):
     }
 
 
-@app.get("/api/reviews")
+@app.get("/api/reviews", response_model=List[ReviewResponse])
 def get_reviews():
     db = SessionLocal()
     reviews = db.query(Review).all()
