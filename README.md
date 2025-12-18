@@ -119,6 +119,3 @@ FastAPI | Django | SQL
  
  https://github.com/Mudi-Srilakshmi
 
-## License
-
-This project is created for educational and assignment purposes.
