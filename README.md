@@ -9,15 +9,28 @@ Incoming messages are received through a webhook endpoint, processed, and
 stored persistently using a database. The API is designed following
 real-world backend practices.
 
+## Live Demo
+
+**Deployed on Render**
+
+- API Base URL:  
+  https://whatsapp-review-api.onrender.com
+
+- Swagger UI (Test the API live):  
+  https://whatsapp-review-api.onrender.com/docs
+
+> Note: This is a backend API project, so the base URL may return `Not Found`.  
+> Use the Swagger UI link above to interact with and test all endpoints.
+
 ## Features
 
-POST /webhook – Receive WhatsApp-style messages (From, Body) via form-data
-GET /api/reviews – Fetch all stored reviews in JSON format
-Database-backed storage (SQLite using SQLAlchemy)
-Pydantic schemas for clean API responses
-Swagger UI for easy testing and exploration
-Modular project structure (models, schemas, database)
-Designed for webhook-based systems like Twilio WhatsApp API
+- POST /webhook – Receive WhatsApp-style messages (From, Body) via form-data  
+- GET /api/reviews – Fetch all stored reviews in JSON format  
+- Database-backed storage (SQLite using SQLAlchemy)  
+- Pydantic schemas for clean API responses  
+- Swagger UI for easy testing and exploration  
+- Modular project structure (models, schemas, database)  
+- Designed for webhook-based systems like Twilio WhatsApp API  
 
 ## Tech Stack
 
