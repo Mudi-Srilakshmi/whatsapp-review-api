@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Form
-from datetime import datetime
+from fastapi import FastAPI, Form, Depends, HTTPException
+from sqlalchemy.orm import Session
 from typing import List
 
 from database import SessionLocal, engine, Base
@@ -12,36 +12,51 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
 
-@app.post("/webhook")
-async def webhook(From: str = Form(...), Body: str = Form(...)):
-    """
-    Simulate WhatsApp webhook.
-    Twilio will send:
-      From -> phone number
-      Body -> message text
-    """
-
+# Dependency for DB session
+def get_db():
     db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-    new_review = Review(
-        phone=From,
-        message=Body.strip()
-    )
 
-    db.add(new_review)
-    db.commit()
-    db.refresh(new_review)
-    db.close()
+@app.post("/webhook")
+def webhook(
+    From: str = Form(...),
+    Body: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Simulate WhatsApp webhook
+    """
 
-    return {
-        "reply": "Thank you! Your review was received and stored successfully."
-    }
+    # Validation
+    if not Body.strip():
+        raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+    try:
+        new_review = Review(
+            phone=From,
+            message=Body.strip()
+        )
+
+        db.add(new_review)
+        db.commit()
+        db.refresh(new_review)
+
+        return {
+            "reply": "Thank you! Your review was received successfully."
+        }
+
+    except Exception:
+        raise HTTPException(status_code=500, detail="Server error")
 
 
 @app.get("/api/reviews", response_model=List[ReviewResponse])
-def get_reviews():
-    db = SessionLocal()
-    reviews = db.query(Review).all()
-    db.close()
-
-    return reviews
+def get_reviews(db: Session = Depends(get_db)):
+    try:
+        reviews = db.query(Review).all()
+        return reviews
+    except Exception:
+        raise HTTPException(status_code=500, detail="Server error")
