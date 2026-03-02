@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
 class ReviewCreate(BaseModel):
-    phone: str
-    message: str
+    phone: str = Field(..., min_length=10, max_length=15, example="+919876543210")
+    message: str = Field(..., min_length=1, max_length=255, example="Great product!")
 
 
 class ReviewResponse(BaseModel):
@@ -13,5 +13,4 @@ class ReviewResponse(BaseModel):
     message: str
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
